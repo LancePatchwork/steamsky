@@ -1,3 +1,8 @@
+## Steam Sky ship cargo UI module
+##
+## This module contains code related to the player ship's cargo management
+## interface in the game.
+
 # Copyright 2024-2025 Bartek thindil Jasicki
 #
 # This file is part of Steam Sky.
@@ -21,14 +26,14 @@ import ../[config, crewinventory, game, items, messages, missions, shipscargo,
 import coreui, dialogs, dialogs2, errordialog, table, updateheader, utilsui2
 
 var
-  cargoTable: TableWidget
+  cargoTable: TableWidget = nil
     ## The UI table with all items of the player's ship's cargo
-  cargoIndexes: seq[Natural]
+  cargoIndexes: seq[Natural] = @[]
     ## The list of indexes of the items in the cargo
 
 proc showCargoCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [
-    RootEffect], cdecl.} =
+    RootEffect], contractual, cdecl.} =
   ## Show the cargo of the player ship
   ##
   ## * clientData - the additional data for the Tcl command
@@ -41,6 +46,7 @@ proc showCargoCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## ShowCargo ?page?
   ## Optional paramater page is the number of the page of cargo list to show
+  discard clientData; discard interp
   let
     shipCanvas = mainPaned & ".shipinfoframe.cargo.canvas"
     cargoInfoFrame = shipCanvas & ".frame"
@@ -146,8 +152,7 @@ const defaultCargoSortOrder = none
 var cargoSortOrder = defaultCargoSortOrder
 
 proc sortCargoCommand(clientData: cint; interp: PInterp; argc: cint;
-    argv: cstringArray): TclResults {.raises: [], tags: [
-    RootEffect], cdecl.} =
+    argv: cstringArray): TclResults {.raises: [], tags: [RootEffect], contractual, cdecl.} =
   ## Sort the player's ship's cargo list
   ##
   ## * clientData - the additional data for the Tcl command
@@ -160,6 +165,7 @@ proc sortCargoCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## SortShipCargo x
   ## X is X axis coordinate where the player clicked the mouse button
+  let _ = clientData; let _ = interp
   let column: Positive = try:
         (if argv[1] == "-1": Positive.high else: getColumnNumber(
             table = cargoTable, xPosition = ($argv[1]).parseInt))
@@ -221,7 +227,8 @@ proc sortCargoCommand(clientData: cint; interp: PInterp; argc: cint;
           item.protoIndex].weight, quality: item.quality, id: index))
     except:
       return showError(message = "Can't add local item to cargo.")
-  proc sortCargo(x, y: LocalCargoData): int =
+  ## Sort the local cargo data based on the current cargoSortOrder enum value. Returns a comparison integer for sorting.
+  proc sortCargo(x, y: LocalCargoData): int {.raises: [], contractual.} =
     case cargoSortOrder
     of nameAsc:
       if x.name < y.name:
@@ -294,7 +301,7 @@ proc sortCargoCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc showGiveItemCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [WriteIOEffect,
-        TimeEffect, RootEffect], cdecl.} =
+        TimeEffect, RootEffect], contractual, cdecl.} =
   ## Show UI to give the selected item from the ship cargo to the selected
   ## crew member
   ##
@@ -308,6 +315,7 @@ proc showGiveItemCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## ShowGiveItem itemindex
   ## Itemindex is the index of the item which will be set
+  let _ = clientData; let _ = interp; let _ = argc
   let
     itemIndex = try:
         ($argv[1]).parseInt - 1
@@ -368,7 +376,7 @@ proc showGiveItemCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc giveItemCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [
-    RootEffect], cdecl.} =
+    RootEffect], contractual, cdecl.} =
   ## Give selected amount of the selected item from the ship's cargo to the
   ## selected crew member
   ##
@@ -381,6 +389,7 @@ proc giveItemCommand(clientData: cint; interp: PInterp; argc: cint;
   ##
   ## Tcl:
   ## GiveItem
+  let _ = clientData; let _ = interp; let _ = argc
   let
     itemDialog = ".itemdialog"
     spinBox = itemDialog & ".giveamount"
@@ -426,7 +435,7 @@ proc giveItemCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc showDropItemCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [WriteIOEffect,
-        TimeEffect, RootEffect], cdecl.} =
+        TimeEffect, RootEffect], contractual, cdecl.} =
   ## Show UI to drop the selected item from the ship cargo
   ##
   ## * clientData - the additional data for the Tcl command
@@ -439,6 +448,7 @@ proc showDropItemCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## ShowDropItem itemindex
   ## Itemindex is the index of the item which will be set
+  let _ = clientData; let _ = interp; let _ = argc
   let itemIndex = try:
       ($argv[1]).parseInt - 1
     except:
@@ -450,7 +460,7 @@ proc showDropItemCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc dropItemCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [
-    RootEffect], cdecl.} =
+    RootEffect], contractual, cdecl.} =
   ## Drop selected amount of the selected item from the ship's cargo
   ##
   ## * clientData - the additional data for the Tcl command
@@ -462,8 +472,9 @@ proc dropItemCommand(clientData: cint; interp: PInterp; argc: cint;
   ##
   ## Tcl:
   ## DropItem
+  let _ = clientData; let _ = interp; let _ = argc
+  const itemDialog = ".itemdialog"
   let
-    itemDialog = ".itemdialog"
     spinBox = itemDialog & ".amount"
   var dropAmount, dropAmount2 = try:
       tclEval2(script = spinBox & " get").parseInt
@@ -505,7 +516,7 @@ proc dropItemCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc showCargoItemInfoCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [WriteIOEffect,
-        TimeEffect, RootEffect], cdecl.} =
+        TimeEffect, RootEffect], contractual, cdecl.} =
   ## Show information about the selected item in the player's ship cargo
   ##
   ## * clientData - the additional data for the Tcl command
@@ -518,6 +529,7 @@ proc showCargoItemInfoCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## ShowCargoItemInfo itemindex
   ## Itemindex is the index of the item which information will be show
+  let _ = clientData; let _ = interp; let _ = argc
   let itemIndex = try:
       ($argv[1]).parseInt - 1
     except:
@@ -535,7 +547,7 @@ proc showCargoItemInfoCommand(clientData: cint; interp: PInterp; argc: cint;
 
 proc updateMaxGiveAmountCommand(clientData: cint; interp: PInterp; argc: cint;
     argv: cstringArray): TclResults {.raises: [], tags: [WriteIOEffect,
-        TimeEffect, RootEffect], cdecl.} =
+        TimeEffect, RootEffect], contractual, cdecl.} =
   ## Update max give amount after selecting the crew member
   ##
   ## * clientData - the additional data for the Tcl command
@@ -548,13 +560,14 @@ proc updateMaxGiveAmountCommand(clientData: cint; interp: PInterp; argc: cint;
   ## Tcl:
   ## UpdateMaxGiveAmount itemindex
   ## ItemIndex is the index of the item to give
+  let _ = clientData; let _ = interp; let _ = argc
   let
     itemIndex = try:
         ($argv[1]).parseInt
       except:
         return showError(message = "Can't get the item's index.")
     item = playerShip.cargo[itemIndex]
-    crewBox = ".itemdialog.member"
+    const crewBox = ".itemdialog.member"
     memberIndex = try:
         tclEval2(script = crewBox & " current").parseInt
       except:
@@ -579,16 +592,16 @@ proc updateMaxGiveAmountCommand(clientData: cint; interp: PInterp; argc: cint;
   return tclOk
 
 proc addCommands*() {.raises: [], tags: [WriteIOEffect, TimeEffect,
-    RootEffect].} =
+    RootEffect], contractual.} =
   ## Adds Tcl commands related to the crew UI
   try:
-    addCommand("ShowCargo", showCargoCommand)
-    addCommand("SortShipCargo", sortCargoCommand)
-    addCommand("ShowGiveItem", showGiveItemCommand)
-    addCommand("GiveItem", giveItemCommand)
-    addCommand("ShowDropItem", showDropItemCommand)
-    addCommand("DropItem", dropItemCommand)
-    addCommand("ShowCargoItemInfo", showCargoItemInfoCommand)
-    addCommand("UpdateMaxGiveAmount", updateMaxGiveAmountCommand)
+    addCommand(name = "ShowCargo", nimProc = showCargoCommand)
+    addCommand(name = "SortShipCargo", nimProc = sortCargoCommand)
+    addCommand(name = "ShowGiveItem", nimProc = showGiveItemCommand)
+    addCommand(name = "GiveItem", nimProc = giveItemCommand)
+    addCommand(name = "ShowDropItem", nimProc = showDropItemCommand)
+    addCommand(name = "DropItem", nimProc = dropItemCommand)
+    addCommand(name = "ShowCargoItemInfo", nimProc = showCargoItemInfoCommand)
+    addCommand(name = "UpdateMaxGiveAmount", nimProc = updateMaxGiveAmountCommand)
   except:
     showError(message = "Can't add a Tcl command.")
