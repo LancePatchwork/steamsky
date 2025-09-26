@@ -79,7 +79,7 @@ To generate (or regenerate) code documentation, you can use the default *nimble*
 task, `nimble doc [filename]`. It will generate the HTML code documentation
 of the selected file. To build the code documenation for the whole project,
 type in console: `nimble docs -y`, in the main directory, where the file is.
-It will generate the code documenation in the *htmldoc* directory.
+It will generate the code documentation in the *htmldoc* directory.
 
 ## Running Steam Sky
 
@@ -94,7 +94,7 @@ Additionally, the game requires a few more libraries to run. They are included
 in the releases:
 
 * TkLib. Included in MagicSplat version for Windows, on Linux should
-  be available in all mayor distributions.
+  be available in all major distributions.
 
 * Tk extension *tksvg*. You can get it from:
 

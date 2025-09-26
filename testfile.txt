@@ -1,0 +1,2 @@
+This is a random test file added to test the contribution workflow.
+It simulates a change we might make to the project.
