@@ -4,3 +4,5 @@ bin/gmon.out
 obj/*
 tests/driver/*
 share/fonts/.uuid
+CodingStandard.md
+RandomTODOIGNORE.md
