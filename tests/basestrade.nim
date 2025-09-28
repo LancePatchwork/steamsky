@@ -104,7 +104,7 @@ suite "Unit tests for basestrade module":
 
   test "Count the cost of training.":
     check:
-      trainCost(0, 1) > 0
+      trainCost(0, 1, 0) > 0
 
   test "Train a skill.":
     trainSkill(0, 1, 1)

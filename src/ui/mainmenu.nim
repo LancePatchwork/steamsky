@@ -23,7 +23,8 @@ import ../[basestypes, careers, config, game, game2, tk]
 import dialogs2, errordialog, goalsui, mainmenucommands, showmainmenu,
     table, themes, utilsui, utilsui2
 
-//## TODO: Run nimalyzer again to check progress, then apply other fixes if needed.
+proc createMainMenu*() =
+  ## Create and show the main game menu
   if not gameSettings.showTooltips:
     tclEval(script = "tooltip::tooltip disable")
   setFonts(newSize = gameSettings.mapFontSize, fontType = mapFont)

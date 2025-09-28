@@ -1,6 +1,6 @@
 #!/usr/bin/env -S nim --hints:off
 
-import std/strutils
+import std/[strutils, os]
 
 if not fileExists("steamsky.nimble"):
   echo "This script must be run in the directory where steamsky.nimble file is"

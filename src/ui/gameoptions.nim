@@ -49,7 +49,7 @@ proc showOptionsTabCommand(clientData: cint; interp: PInterp; argc: cint;
       script = optionsCanvas & " bbox all") & "]")
   return tclOk
 
-proc generateOptionsTclScript(): string {.raises: [], contractual.} =
+proc generateOptionsTclScript(): string {.raises: [], contractual, tags: [].} =
   ## Generate the Tcl script for creating the options UI.
   let tclString = """
   ttk::frame .gameframe.paned.optionsframe
@@ -302,8 +302,8 @@ proc showOptionsCommand(clientData: cint; interp: PInterp; argc: cint;
   let optionsCanvas: string = optionsFrame & ".canvas"
   type WidgetData = object
     name, value: string
-  if tclEval2(script = "winfo exists " & optionsCanvas) == "0":
-    tclEval(script = generateOptionsTclScript())
+  # if tclEval2(script = "winfo exists " & optionsCanvas) == "0":
+  #   tclEval(script = generateOptionsTclScript())
 
   # Temporarily removed long string to include fees
 
@@ -870,7 +870,7 @@ proc showOptionsCommand(clientData: cint; interp: PInterp; argc: cint;
       tooltip::tooltip $mapoptions.cursordown \
          "Key used to move cursor down. Select the field\nand press the desired key. To use special key, press it\nthe first then the desired key"
       bind $mapoptions.cursordown <KeyRelease> {SetShortcut %W %K}
-      grid [ttk::label $mapoptions.lbl18 -text {Move cursor donw/right:}] -sticky w
+      grid [ttk::label $mapoptions.lbl18 -text {Move cursor down/right:}] -sticky w
       tooltip::tooltip $mapoptions.lbl18 \
          "Key used to move cursor down and right. Select the field\nand press the desired key. To use special key, press it\nthe first then the desired key"
       grid [ttk::entry $mapoptions.cursordownright -width 15] -row 17 -column 1 \

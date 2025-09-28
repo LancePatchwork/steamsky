@@ -258,7 +258,7 @@ proc showCombat*(state: var GameState; dialog: var GameDialog) {.raises: [],
         pilotIndex = findMember(order = pilot) + 1
       # Show the guns settings
       for gunIndex, gun in guns.mpairs:
-        var hasGunner = playerShip.modules[gun[1]].owner[0] > 0
+        var hasGunner: bool = playerShip.modules[gun[1]].owner[0] > 0
         if hasGunner:
           setLayoutRowDynamic(height = 35, cols = 3, ratio = [0.33.cfloat, 0.33, 0.33])
         else:
@@ -351,7 +351,7 @@ proc showCombat*(state: var GameState; dialog: var GameDialog) {.raises: [],
           labelButton(title = "Boarding party:"):
             dialog = boardingDialog
             setDialog(x = windowWidth / 4)
-          var labelHeight = ceil(x = getTextWidth(text = boardingParty) / (if expandedSection == 1: windowWidth.float else: (windowWidth.float / 2.0))) * 35.0
+          var labelHeight: float = ceil(x = getTextWidth(text = boardingParty) / (if expandedSection == 1: windowWidth.float else: (windowWidth.float / 2.0))) * 35.0
           setLayoutRowDynamic(height = labelHeight, cols = 1)
           wrapLabel(str = boardingParty)
           setLayoutRowDynamic(height = 35, cols = 1)
@@ -544,7 +544,7 @@ proc showBoardingInfo(index: Natural; inCrew: bool = true; dialog: var GameDialo
   ## * dialog - the current in-game dialog displayed on the screen
   ##
   ## Returns the modified parameter dialog.
-  var info = "Uses: "
+  var info: string = "Uses: "
   if inCrew:
     for item in playerShip.crew[index].equipment:
       if item > -1:
