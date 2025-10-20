@@ -169,6 +169,7 @@ proc dockShip*(docking: bool; escape: bool = false): string {.raises: [KeyError,
         if playerShip.crew[memberIndex].contractLength == 0:
           deleteMember(memberIndex = memberIndex, ship = playerShip)
           skyBases[baseIndex].population.inc
+          # Don't increment memberIndex when deleting - the next member moves into this position
         elif playerShip.crew[memberIndex].loyalty < 20 and getRandom(min = 0,
             max = playerShip.crew[memberIndex].loyalty) < 10:
           addMessage(message = playerShip.crew[memberIndex].name &
@@ -178,6 +179,7 @@ proc dockShip*(docking: bool; escape: bool = false): string {.raises: [KeyError,
           for i in playerShip.crew.low .. playerShip.crew.high:
             updateMorale(ship = playerShip, memberIndex = i, value = getRandom(
                 min = -5, max = -1))
+          # Don't increment memberIndex when deleting - the next member moves into this position
         else:
           memberIndex.inc
       if gameSettings.autoAskForBases:
@@ -335,6 +337,9 @@ proc moveShip*(x, y: int; message: var string): Natural {.raises: [
   let speed: float = realSpeed(ship = playerShip).float / 1_000.0
   if speed < 0.5:
     message = "You can't fly because your ship is overloaded."
+    return 0
+  if speed == 0.0:
+    message = "You can't fly because your ship has no speed."
     return 0
   let
     newX: int = playerShip.skyX + x

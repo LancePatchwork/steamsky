@@ -96,6 +96,7 @@ proc updateEvents*(minutes: Positive) {.raises: [], tags: [],
           skyBases[baseIndex].reputation = ReputationData(level: 0, experience: 0)
         skyBases[baseIndex].population -= populationLost
       deleteEvent(eventIndex = key)
+      # Don't increment key when deleting - the next event moves into this position
     else:
       eventsList[key].time = newTime
       key.inc
